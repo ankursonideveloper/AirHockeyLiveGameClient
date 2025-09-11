@@ -3,7 +3,7 @@ import LoginPage from "./Components/LoginPage";
 
 function App() {
   return (
-    <div className="flex flex-col items-center bg-black">
+    <div className="flex flex-col items-center bg-black min-h-screen">
       <LoginPage />
     </div>
   );
