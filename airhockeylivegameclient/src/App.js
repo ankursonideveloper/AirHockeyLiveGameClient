@@ -1,10 +1,10 @@
-import './App.css';
+import "./App.css";
+import LoginPage from "./Components/LoginPage";
 
 function App() {
   return (
-    <div className='bg-slate-400'>
-      <p>Hi</p>
-      <p>Hi</p>
+    <div className="flex flex-col items-center bg-black">
+      <LoginPage />
     </div>
   );
 }
