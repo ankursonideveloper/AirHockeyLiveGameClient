@@ -4,11 +4,11 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
       <div className="flex flex-col items-center gap-2 text-center mb-8">
-        <div className="flex flex-row items-center gap-2 text-4xl md:text-5xl font-bold">
-          <span className="text-pink-500 [text-shadow:_0_0_3px_rgb(236_72_153_/_50%),_0_0_6px_rgb(236_72_153_/_50%)]">
+        <div className="flex flex-row items-center gap-2 text-4xl md:text-5xl font-semibold">
+          <span className="text-pink-500 [text-shadow:_0_0_2px_rgb(236_72_153_/_50%),_0_0_4px_rgb(236_72_153_/_50%)]">
             NEON
           </span>
-          <span className="text-[#21c9ff] [text-shadow:_0_0_3px_rgb(33_201_255_/_50%),_0_0_6px_rgb(33_201_255_/_50%)]">
+          <span className="text-[#21c9ff] [text-shadow:_0_0_2px_rgb(33_201_255_/_50%),_0_0_4px_rgb(33_201_255_/_50%)]">
             PONG
           </span>
         </div>
@@ -18,7 +18,7 @@ const LoginPage = () => {
       </div>
       <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
         <form className="flex w-full flex-col items-center gap-6">
-          <p className="text-2xl font-bold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
+          <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
             Login
           </p>
           <div className="w-full flex flex-col gap-4">
@@ -52,7 +52,7 @@ const LoginPage = () => {
           <div className="w-full flex flex-col items-center gap-3">
             <button
               type="submit"
-              className="w-full rounded-md bg-pink-600 py-2 font-bold text-white shadow-md shadow-pink-500/30 transition-all duration-300 hover:bg-pink-700 hover:shadow-lg hover:shadow-pink-500/50"
+              className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
             >
               Log In
             </button>
