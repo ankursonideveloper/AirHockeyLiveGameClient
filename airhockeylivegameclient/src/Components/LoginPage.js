@@ -48,7 +48,7 @@ const LoginPage = () => {
                 />
               </div>
             </div>
-            <div className="w-full text-right">
+            <div className="w-full text-right -mt-4">
               <button
                 type="button"
                 className="text-sm text-cyan-400 hover:underline hover:text-cyan-300 transition-colors"
@@ -67,6 +67,7 @@ const LoginPage = () => {
               <button
                 type="button"
                 className="text-sm text-slate-400 hover:text-white transition-colors"
+                onClick={() => handleActionClick("Register")}
               >
                 Don't have an account?{" "}
                 <span className="font-semibold text-violet-400 hover:underline">
@@ -95,14 +96,143 @@ const LoginPage = () => {
                 />
               </div>
             </div>
-            <div className="w-full text-right">
+            <div className="w-full text-right -mt-5">
               <button
                 type="button"
                 className="text-sm text-cyan-400 hover:underline hover:text-cyan-300 transition-colors"
                 onClick={() => handleActionClick("Login")}
               >
-                Login
+                Remember the password?{" "}
+                <span className="font-semibold text-violet-400 hover:underline">
+                  Login
+                </span>
               </button>
+            </div>
+            <div className="w-full flex flex-col items-center gap-3">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                onClick={() => handleActionClick("OTP Verification")}
+              >
+                Reset Password
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {pageType === "Register" ? (
+        <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
+          <form className="flex w-full flex-col items-center gap-6">
+            <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
+              Register
+            </p>
+            <div className="w-full flex flex-col gap-4">
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  Set Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="w-full flex flex-col items-center gap-3">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+              >
+                Register
+              </button>
+              <button
+                type="button"
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+                onClick={() => handleActionClick("Login")}
+              >
+                Already have an account?{" "}
+                <span className="font-semibold text-violet-400 hover:underline">
+                  Login
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {pageType === "OTP Verification" ? (
+        <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
+          <form className="flex w-full flex-col items-center gap-6">
+            <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
+              Verify OTP
+            </p>
+            <div className="w-full flex flex-col gap-4">
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  Enter OTP
+                </label>
+                <input
+                  type="text"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="w-full flex flex-col items-center gap-3">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+              >
+                Verify OTP
+              </button>
+              <button
+                type="button"
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+                onClick={() => handleActionClick("Forgot password?")}
+              >
+                Didn’t receive OTP?{" "}
+                <span className="font-semibold text-violet-400 hover:underline">
+                  Resend
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
+
+      {pageType === "Login" ? (
+        <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
+          <form className="flex w-full flex-col items-center gap-6">
+            <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
+              Reset Password
+            </p>
+            <div className="w-full flex flex-col gap-4">
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                />
+              </div>
             </div>
             <div className="w-full flex flex-col items-center gap-3">
               <button
@@ -110,6 +240,16 @@ const LoginPage = () => {
                 className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
               >
                 Reset Password
+              </button>
+              <button
+                type="button"
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+                onClick={() => handleActionClick("Login")}
+              >
+                Back to{" "}
+                <span className="font-semibold text-violet-400 hover:underline">
+                  Login
+                </span>
               </button>
             </div>
           </form>
