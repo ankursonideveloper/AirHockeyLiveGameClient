@@ -28,6 +28,10 @@ const LoginPage = () => {
     setOtp(otp);
   };
 
+  const storeConfirmPassword = (confirmpassword) => {
+    setconfirmPassword(confirmpassword);
+  };
+
   const handleRegister = async (email, password) => {
     console.log(`${email} ${password}`);
     const loginData = { username: email, password: password };
@@ -90,6 +94,42 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "OTP sent successfully") {
       setPagetype("OTP Verification");
+      setErrorMessage(null);
+    } else {
+      setErrorMessage(res.data.message);
+    }
+  };
+
+  const handleForgotPasswordOTP = async (email, otp) => {
+    console.log(`${email} ${otp}`);
+    const loginData = { username: email, otp: otp };
+
+    let res = await axios.post(
+      "http://localhost:5000/api/auth/verify-forgot-password",
+      loginData,
+      { validateStatus: () => true }
+    );
+    console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
+    if (res.data.message === "OTP matches") {
+      setPagetype("Create New Password");
+      setErrorMessage(null);
+    } else {
+      setErrorMessage(res.data.message);
+    }
+  };
+
+  const handleSetNewPassword = async (email, newpassword) => {
+    console.log(`${email} ${newpassword}`);
+    const loginData = { username: email, password: newpassword };
+
+    let res = await axios.post(
+      "http://localhost:5000/api/auth/update-password",
+      loginData,
+      { validateStatus: () => true }
+    );
+    console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
+    if (res.data.message === "Password Updated Successfully") {
+      setPagetype("Login");
       setErrorMessage(null);
     } else {
       setErrorMessage(res.data.message);
@@ -367,6 +407,9 @@ const LoginPage = () => {
                 <input
                   type="text"
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                  onChange={(e) => {
+                    storeOtp(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -374,13 +417,16 @@ const LoginPage = () => {
               <button
                 type="submit"
                 className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleForgotPasswordOTP(email, otp);
+                }}
               >
                 Verify OTP
               </button>
               <button
                 type="button"
                 className="text-sm text-slate-400 hover:text-white transition-colors"
-                onClick={() => handleActionClick("Forgot password?")}
               >
                 Didn’t receive OTP?{" "}
                 <span className="font-semibold text-violet-400 hover:underline">
@@ -444,7 +490,7 @@ const LoginPage = () => {
         <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
           <form className="flex w-full flex-col items-center gap-6">
             <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
-              Create new pasword
+              Create new password
             </p>
             {errorMessage ? (
               <p
@@ -463,7 +509,7 @@ const LoginPage = () => {
                   type="password"
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
                   onChange={(e) => {
-                    storeEmail(e.target.value);
+                    storePassword(e.target.value);
                   }}
                 />
               </div>
@@ -475,7 +521,7 @@ const LoginPage = () => {
                   type="password"
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
                   onChange={(e) => {
-                    storePassword(e.target.value);
+                    storeConfirmPassword(e.target.value);
                   }}
                 />
               </div>
@@ -486,7 +532,7 @@ const LoginPage = () => {
                 className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleRegister(email, password);
+                  handleSetNewPassword(email, confirmPassword);
                 }}
               >
                 Save
