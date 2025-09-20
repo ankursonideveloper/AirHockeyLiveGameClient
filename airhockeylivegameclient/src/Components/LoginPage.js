@@ -7,6 +7,7 @@ const LoginPage = () => {
   const [pageType, setPagetype] = useState("Login");
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [confirmPassword, setconfirmPassword] = useState(null);
   const [otp, setOtp] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -38,6 +39,7 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "User saved") {
       setPagetype("Register OTP Verification");
+      setErrorMessage(null);
     } else {
       setErrorMessage(res.data.message);
     }
@@ -69,9 +71,26 @@ const LoginPage = () => {
       { validateStatus: () => true }
     );
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
-    if (res.data.success && res.status) {
+    if (res.data.message === "Login successful") {
       localStorage.setItem("authToken", res.data.token);
       navigate("/dashboard");
+    } else {
+      setErrorMessage(res.data.message);
+    }
+  };
+
+  const handleForgotPassword = async (email) => {
+    console.log(`${email}`);
+    const loginData = { username: email };
+    let res = await axios.post(
+      "http://localhost:5000/api/auth/forgot-password",
+      loginData,
+      { validateStatus: () => true }
+    );
+    console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
+    if (res.data.message === "OTP sent successfully") {
+      setPagetype("OTP Verification");
+      setErrorMessage(null);
     } else {
       setErrorMessage(res.data.message);
     }
@@ -174,6 +193,14 @@ const LoginPage = () => {
             <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
               Forgot Password
             </p>
+            {errorMessage ? (
+              <p
+                className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-1 rounded relative mb-4"
+                role="alert"
+              >
+                {errorMessage}
+              </p>
+            ) : null}
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col">
                 <label className="mb-1 text-sm font-semibold text-slate-300">
@@ -182,6 +209,9 @@ const LoginPage = () => {
                 <input
                   type="text"
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                  onChange={(e) => {
+                    storeEmail(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -201,7 +231,10 @@ const LoginPage = () => {
               <button
                 type="submit"
                 className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
-                onClick={() => handleActionClick("OTP Verification")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleForgotPassword(email);
+                }}
               >
                 Reset Password
               </button>
@@ -407,7 +440,61 @@ const LoginPage = () => {
         </div>
       ) : null}
 
-      {pageType === "Dashboard" ? <div>Welcome to Dasboard</div> : null}
+      {pageType === "Create New Password" ? (
+        <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
+          <form className="flex w-full flex-col items-center gap-6">
+            <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
+              Create new pasword
+            </p>
+            {errorMessage ? (
+              <p
+                className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-1 rounded relative mb-4"
+                role="alert"
+              >
+                {errorMessage}
+              </p>
+            ) : null}
+            <div className="w-full flex flex-col gap-4">
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                  onChange={(e) => {
+                    storeEmail(e.target.value);
+                  }}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold text-slate-300">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                  onChange={(e) => {
+                    storePassword(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="w-full flex flex-col items-center gap-3">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleRegister(email, password);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
     </div>
   );
 };
