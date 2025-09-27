@@ -10,6 +10,7 @@ const LoginPage = () => {
   const [confirmPassword, setconfirmPassword] = useState(null);
   const [otp, setOtp] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleActionClick = (pageName) => {
     setErrorMessage(null);
@@ -131,6 +132,22 @@ const LoginPage = () => {
     if (res.data.message === "Password Updated Successfully") {
       setPagetype("Login");
       setErrorMessage(null);
+    } else {
+      setErrorMessage(res.data.message);
+    }
+  };
+
+  const handleResendForgotPasswordOTP = async (email) => {
+    console.log(`${email}`);
+    const loginData = { username: email };
+
+    let res = await axios.post(
+      "http://localhost:5000/api/auth/generate-forgot-password-otp",
+      loginData,
+      { validateStatus: () => true }
+    );
+    if (res.data.message === "OTP Sent successfully") {
+      setSuccessMessage("OTP Sent successfully");
     } else {
       setErrorMessage(res.data.message);
     }
@@ -399,6 +416,22 @@ const LoginPage = () => {
             <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
               Verify OTP
             </p>
+            {errorMessage ? (
+              <p
+                className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-1 rounded relative mb-4"
+                role="alert"
+              >
+                {errorMessage}
+              </p>
+            ) : null}
+            {successMessage ? (
+              <p
+                className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-1 rounded relative mb-4"
+                role="alert"
+              >
+                {successMessage}
+              </p>
+            ) : null}
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col">
                 <label className="mb-1 text-sm font-semibold text-slate-300">
@@ -429,7 +462,13 @@ const LoginPage = () => {
                 className="text-sm text-slate-400 hover:text-white transition-colors"
               >
                 Didn’t receive OTP?{" "}
-                <span className="font-semibold text-violet-400 hover:underline">
+                <span
+                  className="font-semibold text-violet-400 hover:underline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleResendForgotPasswordOTP(email);
+                  }}
+                >
                   Resend
                 </span>
               </button>
