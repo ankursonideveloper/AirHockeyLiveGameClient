@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Loader } from "lucide-react";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ const LoginPage = () => {
   const [otp, setOtp] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisbledPasswordSetButton, setIsDisabledPasswordSetButton] =
+    useState(true);
 
   const handleActionClick = (pageName) => {
     setErrorMessage(null);
@@ -34,6 +38,7 @@ const LoginPage = () => {
   };
 
   const handleRegister = async (email, password) => {
+    setIsLoading(true);
     console.log(`${email} ${password}`);
     const loginData = { username: email, password: password };
     let res = await axios.post(
@@ -44,13 +49,16 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "User saved") {
       setPagetype("Register OTP Verification");
+      setIsLoading(false);
       setErrorMessage(null);
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
   const handleVerifyRegisterOTP = async (email, otp) => {
+    setIsLoading(true);
     console.log(`${email} ${otp}`);
     const loginData = { username: email, otp: otp };
 
@@ -62,12 +70,15 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "User Registered Successfully") {
       setPagetype("Login");
+      setIsLoading(false);
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
   const handleLogin = async (email, password) => {
+    setIsLoading(true);
     console.log(`${email} ${password}`);
     const loginData = { username: email, password: password };
     let res = await axios.post(
@@ -78,13 +89,16 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "Login successful") {
       localStorage.setItem("authToken", res.data.token);
+      setIsLoading(false);
       navigate("/dashboard");
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
   const handleForgotPassword = async (email) => {
+    setIsLoading(true);
     console.log(`${email}`);
     const loginData = { username: email };
     let res = await axios.post(
@@ -95,13 +109,16 @@ const LoginPage = () => {
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
     if (res.data.message === "OTP sent successfully") {
       setPagetype("OTP Verification");
+      setIsLoading(false);
       setErrorMessage(null);
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
   const handleForgotPasswordOTP = async (email, otp) => {
+    setIsLoading(true);
     console.log(`${email} ${otp}`);
     const loginData = { username: email, otp: otp };
 
@@ -114,12 +131,15 @@ const LoginPage = () => {
     if (res.data.message === "OTP matches") {
       setPagetype("Create New Password");
       setErrorMessage(null);
+      setIsLoading(false);
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
   const handleSetNewPassword = async (email, newpassword) => {
+    setIsLoading(true);
     console.log(`${email} ${newpassword}`);
     const loginData = { username: email, password: newpassword };
 
@@ -132,8 +152,10 @@ const LoginPage = () => {
     if (res.data.message === "Password Updated Successfully") {
       setPagetype("Login");
       setErrorMessage(null);
+      setIsLoading(false);
     } else {
       setErrorMessage(res.data.message);
+      setIsLoading(false);
     }
   };
 
@@ -150,6 +172,23 @@ const LoginPage = () => {
       setSuccessMessage("OTP Sent successfully");
     } else {
       setErrorMessage(res.data.message);
+    }
+  };
+
+  const validateconfirmPassword = (password, confirmPassword) => {
+    if (pageType === "Create New Password") {
+      if (!password && !confirmPassword) {
+        setErrorMessage("Required both password");
+        setIsDisabledPasswordSetButton(true);
+      } else {
+        if (password === confirmPassword) {
+          setErrorMessage(null);
+          setIsDisabledPasswordSetButton(false);
+        } else {
+          setErrorMessage("Password does not match");
+          setIsDisabledPasswordSetButton(true);
+        }
+      }
     }
   };
 
@@ -190,7 +229,7 @@ const LoginPage = () => {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
+                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none required "
                   onChange={(e) => {
                     storeEmail(e.target.value);
                   }}
@@ -212,7 +251,7 @@ const LoginPage = () => {
             <div className="w-full text-right -mt-4">
               <button
                 type="button"
-                className="text-sm text-cyan-400 hover:underline hover:text-cyan-300 transition-colors"
+                className=" text-sm text-cyan-400 hover:underline hover:text-cyan-300 transition-colors"
                 onClick={() => handleActionClick("Forgot password?")}
               >
                 Forgot password?
@@ -221,13 +260,18 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                className=" w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50 flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleLogin(email, password);
                 }}
               >
-                Log In
+                Log In{" "}
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
               <button
                 type="button"
@@ -287,13 +331,18 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50 flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleForgotPassword(email);
                 }}
               >
-                Reset Password
+                Submit
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
             </div>
           </form>
@@ -343,13 +392,18 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50 flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleRegister(email, password);
                 }}
               >
-                Register
+                Register{" "}
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
               <button
                 type="button"
@@ -397,13 +451,18 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50 flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleVerifyRegisterOTP(email, otp);
                 }}
               >
                 Verify OTP
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
             </div>
           </form>
@@ -449,13 +508,18 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50 flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleForgotPasswordOTP(email, otp);
                 }}
               >
                 Verify OTP
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
               <button
                 type="button"
@@ -470,54 +534,6 @@ const LoginPage = () => {
                   }}
                 >
                   Resend
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      ) : null}
-
-      {pageType === "Forgot Password" ? (
-        <div className="w-full max-w-md rounded-lg border-2 border-violet-500 bg-gray-900/50 p-8 shadow-lg shadow-violet-500/20">
-          <form className="flex w-full flex-col items-center gap-6">
-            <p className="text-2xl font-semibold [text-shadow:_0_0_1px_#fff,_0_0_2px_#fff]">
-              Reset Password
-            </p>
-            <div className="w-full flex flex-col gap-4">
-              <div className="flex flex-col">
-                <label className="mb-1 text-sm font-semibold text-slate-300">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="mb-1 text-sm font-semibold text-slate-300">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
-                />
-              </div>
-            </div>
-            <div className="w-full flex flex-col items-center gap-3">
-              <button
-                type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
-              >
-                Reset Password
-              </button>
-              <button
-                type="button"
-                className="text-sm text-slate-400 hover:text-white transition-colors"
-                onClick={() => handleActionClick("Login")}
-              >
-                Back to{" "}
-                <span className="font-semibold text-violet-400 hover:underline">
-                  Login
                 </span>
               </button>
             </div>
@@ -549,6 +565,7 @@ const LoginPage = () => {
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
                   onChange={(e) => {
                     storePassword(e.target.value);
+                    validateconfirmPassword(e.target.value, confirmPassword);
                   }}
                 />
               </div>
@@ -561,6 +578,7 @@ const LoginPage = () => {
                   className="w-full rounded-md border border-slate-700 bg-slate-800/50 p-2 text-white transition-all duration-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/50 focus:outline-none"
                   onChange={(e) => {
                     storeConfirmPassword(e.target.value);
+                    validateconfirmPassword(password, e.target.value);
                   }}
                 />
               </div>
@@ -568,13 +586,19 @@ const LoginPage = () => {
             <div className="w-full flex flex-col items-center gap-3">
               <button
                 type="submit"
-                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50"
+                disabled={isDisbledPasswordSetButton}
+                className="w-full rounded-md bg-blue-500 py-2 font-bold text-white shadow-blue-500/30 transition-all duration-300 hover:bg-blue-700 hover:shadow-sm hover:shadow-blue-500/50  flex flex-row justify-center"
                 onClick={(e) => {
                   e.preventDefault();
                   handleSetNewPassword(email, confirmPassword);
                 }}
               >
                 Save
+                {isLoading ? (
+                  <span>
+                    <Loader className=" animate-spin w-6 h-6 text-green-400 ml-2 absolute" />
+                  </span>
+                ) : null}
               </button>
             </div>
           </form>
