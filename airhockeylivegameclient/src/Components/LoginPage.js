@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
+import ScoreCard from "./ScoreCard";
+import Logout from "./Logout";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -194,6 +196,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+      <Logout />
       <div className="flex flex-col items-center gap-2 text-center mb-8">
         <div className="flex flex-row items-center gap-2 text-4xl md:text-5xl font-semibold">
           <span className="text-pink-500 [text-shadow:_0_0_2px_rgb(236_72_153_/_50%),_0_0_4px_rgb(236_72_153_/_50%),_0_0_7px_rgb(236_72_153_/_50%)]">
