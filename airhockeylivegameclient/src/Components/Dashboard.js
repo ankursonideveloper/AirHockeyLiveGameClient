@@ -5,7 +5,7 @@ import Arena from "./Arena";
 
 const Dashboard = () => {
   return (
-    <div className="text-slate-300 w-full">
+    <div className="text-slate-300 w-full flex flex-col h-screen mb-1">
       <Navigation />
       <Driver />
       <Arena />
