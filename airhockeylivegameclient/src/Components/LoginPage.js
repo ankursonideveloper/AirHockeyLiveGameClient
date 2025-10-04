@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Loader } from "lucide-react";
-import ScoreCard from "./ScoreCard";
-import Logout from "./Logout";
+import { AuthContext } from "./context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -17,6 +16,8 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDisbledPasswordSetButton, setIsDisabledPasswordSetButton] =
     useState(true);
+
+  const { login } = useContext(AuthContext);
 
   const handleActionClick = (pageName) => {
     setErrorMessage(null);
@@ -82,19 +83,11 @@ const LoginPage = () => {
   const handleLogin = async (email, password) => {
     setIsLoading(true);
     console.log(`${email} ${password}`);
-    const loginData = { username: email, password: password };
-    let res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      loginData,
-      { validateStatus: () => true }
-    );
+    let res = await login(email, password);
+
     console.log(`Login Response: ${JSON.stringify(res, null, 2)}`);
-    if (res.data.message === "Login successful") {
-      localStorage.setItem("authToken", res.data.token);
-      setIsLoading(false);
-      navigate("/dashboard");
-    } else {
-      setErrorMessage(res.data.message);
+    if (!res.success) {
+      setErrorMessage(res.message);
       setIsLoading(false);
     }
   };
