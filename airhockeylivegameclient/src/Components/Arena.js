@@ -34,7 +34,7 @@ const Arena = () => {
             const newPos =
               prev.x >= (currentWidthOfArena * 5) / 6 - 4
                 ? (currentWidthOfArena * 5) / 6
-                : prev.x + 2;
+                : prev.x + 4;
             previousPaddle1Position.current = newPos;
             return { x: newPos };
           });

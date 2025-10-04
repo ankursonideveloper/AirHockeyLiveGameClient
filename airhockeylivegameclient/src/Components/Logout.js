@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "././context/AuthContext";
 
 const Logout = () => {
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <div className="flex flex-row px-1 py-1 my-1">
-      <span className=" rounded-2xl border-2 border-green-500 py-1 px-1 z-20 bg-black">
-        Logout
-      </span>
-      <p className="right-2 bottom-1 rounded-xl border-2 border-red-500 px-1 z-10 bg-black relative text-center">
+    <div className="flex items-center justify-between px-3 py-2 my-2 bg-gray-900 rounded-lg shadow-md border border-gray-700">
+      {/* Username Display */}
+      <p className="text-white font-semibold text-sm bg-gray-800 px-3 py-1 rounded-md border border-gray-600">
         ankursoni2974
       </p>
+
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg border border-red-700 transition-all duration-200"
+      >
+        Logout
+      </button>
     </div>
   );
 };
