@@ -5,13 +5,15 @@ const Arena = () => {
   const arenaRef = useRef(null);
   const arenaInitialWidthRef = useRef(null);
   const [position, setPosition] = useState({ x: 0 });
-  const [onLeftMost, setOnLeftMost] = useState(false);
-  const [onRightMost, setOnRightMost] = useState(false);
+  const previousPaddle1Position = useRef(0);
 
   useEffect(() => {
     if (arenaRef.current) {
-      setPosition({ x: (arenaRef.current.offsetWidth * 5) / 12 });
-      arenaInitialWidthRef.current = arenaRef.current.offsetWidth;
+      const arenaInitialWidth = arenaRef.current.clientWidth;
+      const paddleInitialPosition = (arenaInitialWidth * 5) / 12;
+      setPosition({ x: paddleInitialPosition });
+      arenaInitialWidthRef.current = arenaInitialWidth;
+      previousPaddle1Position.current = paddleInitialPosition;
     }
   }, []);
 
@@ -21,21 +23,20 @@ const Arena = () => {
       switch (e.key) {
         case "ArrowLeft":
           setPosition((prev) => {
-            if (prev.x <= 1) {
-              return { x: 0 };
-            } else {
-              return { x: prev.x - 2 };
-            }
+            const newPos = prev.x <= 1 ? 0 : prev.x - 4;
+            previousPaddle1Position.current = newPos;
+            return { x: newPos };
           });
           break;
 
         case "ArrowRight":
           setPosition((prev) => {
-            if (prev.x >= (currentWidthOfArena * 5) / 6 - 2) {
-              return { x: (currentWidthOfArena * 5) / 6 };
-            } else {
-              return { x: prev.x + 2 };
-            }
+            const newPos =
+              prev.x >= (currentWidthOfArena * 5) / 6 - 4
+                ? (currentWidthOfArena * 5) / 6
+                : prev.x + 2;
+            previousPaddle1Position.current = newPos;
+            return { x: newPos };
           });
 
           break;
@@ -49,33 +50,20 @@ const Arena = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      let arenaNewWidth = arenaRef.current.offsetWidth;
-      let arenaLastWidth = arenaInitialWidthRef.current;
-      if (arenaNewWidth > arenaLastWidth) {
-        console.log("Width is increasing → expanding");
-        setPosition((prev) => {
-          if (prev.x == 0) {
-            return { x: prev.x };
-          } else if (prev.x >= (5 * arenaNewWidth) / 12 - 1) {
-            return { x: (5 * arenaNewWidth) / 12 };
-          } else {
-            return { x: prev.x + (5 * (arenaNewWidth - arenaLastWidth)) / 12 };
-          }
-        });
-      } else if (arenaNewWidth < arenaLastWidth) {
-        console.log("Width is decreasing → shrinking");
-        setPosition((prev) => {
-          if (prev.x <= 1) {
-            return { x: 0 };
-          } else if (prev.x == (5 * arenaNewWidth) / 12) {
-            return { x: prev.x };
-          } else {
-            return { x: prev.x - (5 * (arenaLastWidth - arenaNewWidth)) / 12 };
-          }
-        });
+      if (!arenaRef.current) {
+        return;
       }
 
-      arenaInitialWidthRef.current = arenaNewWidth;
+      const arenaPreviousWidth = arenaInitialWidthRef.current;
+      const arenaCurrentWidth = arenaRef.current.clientWidth;
+      const paddle1PreviousPosition = previousPaddle1Position.current;
+      const paddle1NewPosition =
+        arenaCurrentWidth * (paddle1PreviousPosition / arenaPreviousWidth);
+
+      setPosition({ x: paddle1NewPosition });
+
+      arenaInitialWidthRef.current = arenaCurrentWidth;
+      previousPaddle1Position.current = paddle1NewPosition;
     };
 
     window.addEventListener("resize", handleResize);
