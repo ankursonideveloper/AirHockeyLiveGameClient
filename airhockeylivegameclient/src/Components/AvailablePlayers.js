@@ -3,7 +3,7 @@ import React from "react";
 const AvailablePlayers = ({ availablePlayers }) => {
   return (
     <div className="max-w-md mx-auto p-2 rounded-xl shadow-md bg-black">
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-row gap-3">
         <label
           htmlFor="player-select"
           className="block text-sm font-semibold text-white bg-black"
